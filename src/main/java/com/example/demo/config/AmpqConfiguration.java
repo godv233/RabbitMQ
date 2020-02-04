@@ -25,7 +25,7 @@ public class AmpqConfiguration {
      * @param cachingConnectionFactory
      * @return
      */
-    @Bean
+    @Bean("rabbitTransactionManager")
     public RabbitTransactionManager rabbitTransactionManager(CachingConnectionFactory cachingConnectionFactory) {
         return new RabbitTransactionManager(cachingConnectionFactory);
     }

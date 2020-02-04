@@ -8,6 +8,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +21,9 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AppTest {
+    private static String EXCHANGE="exchange.direct";
+    private static String ROUTINGKEY="zengwei.news";
+
     @Autowired
     RabbitTemplate rabbitTemplate;
     @Autowired
@@ -42,7 +46,17 @@ public class AppTest {
         //发送一个map.对象使用的是jdk的方式序列化的。我们最好使用json的方式。
         Book book = new Book("java", "没有确认机制");
         //发送消息
-        rabbitTemplate.convertAndSend("exchange.direct", "zengwei.news", book);
+        rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);
+    }
+
+    /**
+     * 发送事务机制
+     */
+    @Test
+    @Transactional(rollbackFor = Exception.class,transactionManager = "rabbitTransactionManager")
+    public void test2(){
+        Book book=new Book("java","事务");
+        rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);
     }
 
 }
