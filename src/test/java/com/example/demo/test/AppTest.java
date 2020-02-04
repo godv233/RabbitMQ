@@ -47,7 +47,7 @@ public class AppTest {
         map.put("曾伟", "第一个消息");
         map.put("godv", Arrays.asList("123", "232"));
         //发送一个map.对象使用的是jdk的方式序列化的。我们最好使用json的方式。
-        for (int i=0;i<1000;i++){
+        for (int i=0;i<10000;i++){
             Book book = new Book("java"+i, "没有确认机制");
             //发送消息
             rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);

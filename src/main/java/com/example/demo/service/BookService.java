@@ -25,8 +25,9 @@ public class BookService {
         //消费者限流
         //channel.basicQos(0,1,false);
         //手动应答
+        Thread.sleep(20);
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
-        Thread.sleep(200);
+
     }
 
 //    @RabbitListener(queues = "zengwei.news")
