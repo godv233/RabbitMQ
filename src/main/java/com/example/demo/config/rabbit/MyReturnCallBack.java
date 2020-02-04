@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 public class MyReturnCallBack  implements RabbitTemplate.ReturnCallback {
     @Override
     public void returnedMessage(Message message, int i, String s, String s1, String s2) {
-        System.out.println("消息被退回");
+        //会得到返回的消息，可以在这里处理相关的逻辑。
+        System.out.println("消息return "+message);
     }
 }

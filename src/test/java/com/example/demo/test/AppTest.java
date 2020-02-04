@@ -1,9 +1,12 @@
 package com.example.demo.test;
 
 import com.example.demo.bean.Book;
+import com.example.demo.config.rabbit.MyConfirmCallBack;
+import com.example.demo.config.rabbit.MyReturnCallBack;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,7 +62,25 @@ public class AppTest {
             Book book = new Book("java", "事务" + i);
             rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);
         }
-
     }
 
+    /**
+     * 发送确认机制。和发送事务机制冲突，不能同时使用
+     */
+    @Test
+    public void test3(){
+        //返回的时候，异步回调该方法。来判断发送结果
+        rabbitTemplate.setConfirmCallback(new MyConfirmCallBack());
+        //true会监听接收到路由不可达的消息，false则broker直接删除
+        rabbitTemplate.setMandatory(true);
+        //路由不到，回调该方法返回message
+        rabbitTemplate.setReturnCallback(new MyReturnCallBack());
+        for (int i = 0; i < 10; i++) {
+            Book book = new Book("java", "confirm" + i);
+            //回调时传输的一些数据
+            CorrelationData correlationData=new CorrelationData();
+            correlationData.setId(i+"");
+            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY+"ad", book,correlationData);
+        }
+    }
 }
