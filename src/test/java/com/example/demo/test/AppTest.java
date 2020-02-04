@@ -21,8 +21,8 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AppTest {
-    private static String EXCHANGE="exchange.direct";
-    private static String ROUTINGKEY="zengwei.news";
+    private static String EXCHANGE = "exchange.direct";
+    private static String ROUTINGKEY = "zengwei.news";
 
     @Autowired
     RabbitTemplate rabbitTemplate;
@@ -53,10 +53,13 @@ public class AppTest {
      * 发送事务机制
      */
     @Test
-    @Transactional(rollbackFor = Exception.class,transactionManager = "rabbitTransactionManager")
-    public void test2(){
-        Book book=new Book("java","事务");
-        rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);
+    @Transactional(rollbackFor = Exception.class, transactionManager = "rabbitTransactionManager")
+    public void test2() {
+        for (int i = 0; i < 1000; i++) {
+            Book book = new Book("java", "事务" + i);
+            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);
+        }
+
     }
 
 }
