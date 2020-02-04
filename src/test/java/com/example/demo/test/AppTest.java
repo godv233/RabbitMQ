@@ -5,7 +5,7 @@ import com.example.demo.config.rabbit.MyConfirmCallBack;
 import com.example.demo.config.rabbit.MyReturnCallBack;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,13 +75,18 @@ public class AppTest {
         rabbitTemplate.setMandatory(true);
         //路由不到，回调该方法返回message
         rabbitTemplate.setReturnCallback(new MyReturnCallBack());
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             Book book = new Book("java", "confirm" + i);
             //回调时传输的一些数据
             CorrelationData correlationData=new CorrelationData();
             correlationData.setId(i+"");
-            //rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY+"ad", book,correlationData);
-            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book,correlationData);
+            //rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY+"ad", book,correlationData);//错误路由
+            Message message= MessageBuilder.withBody(book.toString().getBytes()).build();
+            //持久化,默认是持久化的
+           // message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+            //不持久化
+            //message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT);
+            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY,message,correlationData);
         }
     }
 }

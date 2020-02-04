@@ -7,7 +7,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -20,7 +19,7 @@ public class BookService {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
-    @RabbitListener(queues = "zengwei.news")
+//    @RabbitListener(queues = "zengwei.news")
     public void receive(Book book,Message message, Channel channel) throws IOException {
         System.out.println("收到消息" + book);
         //手动应答.
