@@ -71,7 +71,7 @@ public class AppTest {
     public void test3(){
         //返回的时候，异步回调该方法。来判断发送结果
         rabbitTemplate.setConfirmCallback(new MyConfirmCallBack());
-        //true会监听接收到路由不可达的消息，false则broker直接删除
+        //true会监听接收到路由不可达的消息，false则broker直接删除.默认true
         rabbitTemplate.setMandatory(true);
         //路由不到，回调该方法返回message
         rabbitTemplate.setReturnCallback(new MyReturnCallBack());
@@ -80,7 +80,8 @@ public class AppTest {
             //回调时传输的一些数据
             CorrelationData correlationData=new CorrelationData();
             correlationData.setId(i+"");
-            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY+"ad", book,correlationData);
+            //rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY+"ad", book,correlationData);
+            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book,correlationData);
         }
     }
 }
