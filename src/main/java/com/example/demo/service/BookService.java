@@ -19,10 +19,22 @@ public class BookService {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
-//    @RabbitListener(queues = "zengwei.news")
-    public void receive(Book book,Message message, Channel channel) throws IOException {
-        System.out.println("收到消息" + book);
-        //手动应答.
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(),true);
+    @RabbitListener(queues = "zengwei.news")
+    public void receive1(Message message, Channel channel) throws IOException, InterruptedException {
+        System.out.println("消费者1：收到消息");
+        //消费者限流
+        //channel.basicQos(0,1,false);
+        //手动应答
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
+        Thread.sleep(200);
     }
+
+//    @RabbitListener(queues = "zengwei.news")
+//    public void receive2(Book book, Message message, Channel channel) throws IOException, InterruptedException {
+//        System.out.println("消费者2：收到消息" + book);
+//        //手动应答.
+//        channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
+//        //Thread.sleep(20000);
+//    }
+
 }

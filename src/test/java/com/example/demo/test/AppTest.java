@@ -47,9 +47,13 @@ public class AppTest {
         map.put("曾伟", "第一个消息");
         map.put("godv", Arrays.asList("123", "232"));
         //发送一个map.对象使用的是jdk的方式序列化的。我们最好使用json的方式。
-        Book book = new Book("java", "没有确认机制");
-        //发送消息
-        rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);
+        for (int i=0;i<1000;i++){
+            Book book = new Book("java"+i, "没有确认机制");
+            //发送消息
+            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY, book);
+        }
+
+
     }
 
     /**
@@ -81,12 +85,12 @@ public class AppTest {
             CorrelationData correlationData=new CorrelationData();
             correlationData.setId(i+"");
             //rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY+"ad", book,correlationData);//错误路由
-            Message message= MessageBuilder.withBody(book.toString().getBytes()).build();
             //持久化,默认是持久化的
+            Message message= MessageBuilder.withBody(book.toString().getBytes()).build();
            // message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
             //不持久化
             //message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT);
-            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY,message,correlationData);
+            rabbitTemplate.convertAndSend(EXCHANGE, ROUTINGKEY,book,correlationData);
         }
     }
 }
